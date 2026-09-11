@@ -9,8 +9,10 @@ pytest
 scikit-learn
 joblib
 matplotlib
+requests
+python-dateutil
+cryptography
 
 playwright
 jinja2
 openpyxl
-gunicorn
