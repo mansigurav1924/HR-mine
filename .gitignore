@@ -1,0 +1,25 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+.env
+
+# Supabase local environment config
+supabase/.temp/
+supabase/.branch
+
+# ML Dataset Generation
+server/ml/manifests/*.csv
+server/ml/processed/
+server/ml/splits/*.csv
+server/ml/splits/*.json
+server/ml/artifacts/*.joblib
+server/ml/artifacts/*.json
+server/ml/reports/*.png
+server/ml/reports/*.txt
+server/ml/reports/*.json
+
+# Node
+node_modules/
+dist/
+.DS_Store
