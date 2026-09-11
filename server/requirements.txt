@@ -1,0 +1,16 @@
+fastapi
+uvicorn
+python-dotenv
+supabase
+python-multipart
+pymupdf
+python-docx
+pytest
+scikit-learn
+joblib
+matplotlib
+
+playwright
+jinja2
+openpyxl
+gunicorn
