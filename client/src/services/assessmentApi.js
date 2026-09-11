@@ -1,7 +1,7 @@
 import api from './api';
 import axios from 'axios';
 
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
+const BASE_URL = import.meta.env.VITE_API_URL || 'https://hr-portal-dqoi.onrender.com';
 
 // HR Endpoints (Authenticated)
 export const generateAssessment = async (applicationId, config = { question_count: 20, pass_threshold: 60.0 }) => {
