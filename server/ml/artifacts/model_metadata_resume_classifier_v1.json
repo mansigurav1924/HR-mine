@@ -1,0 +1,24 @@
+{
+  "model_version": "resume_classifier_v1",
+  "created_at": "2026-08-26T17:32:06.158725",
+  "algorithm": "LogisticRegression",
+  "labels": [
+    "bad_intern",
+    "good_intern"
+  ],
+  "random_state": 42,
+  "training_records": 250,
+  "testing_records": 63,
+  "train_class_distribution": {
+    "good_intern": 185,
+    "bad_intern": 65
+  },
+  "test_class_distribution": {
+    "good_intern": 47,
+    "bad_intern": 16
+  },
+  "cv_macro_f1_mean": 0.935486579398251,
+  "test_macro_f1": 0.901098901098901,
+  "train_split_hash": "c5422d5a2891c06d7c3ed1adb1de45b565cd26fe0c2558c23b35180624d12938",
+  "test_split_hash": "103093ec615223627611cffa10ce6b05d64be2641bc167722f0441fbb452925c"
+}
