@@ -1,0 +1,28 @@
+{
+  "labels": {
+    "good_intern": "Candidate meets the reviewer's objective job-relevant suitability criteria for the relevant internship/domain. Exhibits required technical skills, relevant projects, experience, or academic alignment.",
+    "bad_intern": "Candidate does not meet the reviewer's objective minimum job-relevant criteria for the relevant internship/domain. Lacks required technical foundation, relevant background, or sufficient evidence of capability.",
+    "exclude": "Record should not be used for training, for example corrupted, duplicate, unusable, image-only, or fundamentally out-of-scope resume.",
+    "unreviewed": "Manual review not completed. Record will not be included in ML training sets."
+  },
+  "forbidden_criteria": [
+    "name",
+    "gender",
+    "age",
+    "photograph",
+    "religion",
+    "caste",
+    "marital status",
+    "home address",
+    "other protected/sensitive personal characteristics",
+    "college prestige as an automatic proxy for competence"
+  ],
+  "allowed_criteria": [
+    "required technical skills",
+    "preferred technical skills",
+    "relevant projects",
+    "relevant internship/work experience",
+    "education requirement where relevant",
+    "practical technical evidence"
+  ]
+}
