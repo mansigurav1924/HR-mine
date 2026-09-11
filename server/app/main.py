@@ -138,6 +138,14 @@ def read_root():
 def health_check():
     return {"status": "healthy"}
 
+@app.get("/api/debug/cors")
+def debug_cors():
+    return {
+        "raw_ALLOWED_ORIGINS_env": os.getenv("ALLOWED_ORIGINS"),
+        "raw_FRONTEND_URL_env": os.getenv("FRONTEND_URL"),
+        "computed_allowed_origins": allowed_origins,
+    }
+
 @app.get("/api/health/supabase")
 def supabase_health_check():
     try:
