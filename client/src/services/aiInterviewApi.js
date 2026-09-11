@@ -10,7 +10,7 @@ const getAuthHeaders = async () => {
 
 export const generateInterview = async (applicationId, config) => {
   const headers = await getAuthHeaders();
-  const response = await fetch(`http://localhost:8000/api/ai-interviews/${applicationId}/generate`, {
+  const response = await fetch(`https://hr-portal-dqoi.onrender.com/api/ai-interviews/${applicationId}/generate`, {
     method: 'POST',
     headers,
     body: JSON.stringify(config)
@@ -24,7 +24,7 @@ export const generateInterview = async (applicationId, config) => {
 
 export const generateInterviewToken = async (interviewId) => {
   const headers = await getAuthHeaders();
-  const response = await fetch(`http://localhost:8000/api/ai-interviews/${interviewId}/token`, {
+  const response = await fetch(`https://hr-portal-dqoi.onrender.com/api/ai-interviews/${interviewId}/token`, {
     method: 'POST',
     headers
   });
@@ -37,21 +37,21 @@ export const generateInterviewToken = async (interviewId) => {
 
 export const fetchInterviewsDashboard = async () => {
   const headers = await getAuthHeaders();
-  const response = await fetch(`http://localhost:8000/api/ai-interviews/`, { headers });
+  const response = await fetch(`https://hr-portal-dqoi.onrender.com/api/ai-interviews/`, { headers });
   if (!response.ok) throw new Error('Failed to fetch interviews');
   return response.json();
 };
 
 export const fetchInterviewDetail = async (interviewId) => {
   const headers = await getAuthHeaders();
-  const response = await fetch(`http://localhost:8000/api/ai-interviews/${interviewId}/detail`, { headers });
+  const response = await fetch(`https://hr-portal-dqoi.onrender.com/api/ai-interviews/${interviewId}/detail`, { headers });
   if (!response.ok) throw new Error('Failed to fetch interview detail');
   return response.json();
 };
 
 export const manualComplete = async (interviewId) => {
   const headers = await getAuthHeaders();
-  const response = await fetch(`http://localhost:8000/api/ai-interviews/${interviewId}/manual-complete`, {
+  const response = await fetch(`https://hr-portal-dqoi.onrender.com/api/ai-interviews/${interviewId}/manual-complete`, {
     method: 'POST',
     headers
   });
@@ -61,7 +61,7 @@ export const manualComplete = async (interviewId) => {
 
 export const proceedToHuman = async (interviewId) => {
   const headers = await getAuthHeaders();
-  const response = await fetch(`http://localhost:8000/api/ai-interviews/${interviewId}/proceed-human-interview`, {
+  const response = await fetch(`https://hr-portal-dqoi.onrender.com/api/ai-interviews/${interviewId}/proceed-human-interview`, {
     method: 'POST',
     headers
   });
@@ -71,7 +71,7 @@ export const proceedToHuman = async (interviewId) => {
 
 // Candidate Endpoints
 export const getCandidateState = async (token) => {
-  const response = await fetch(`http://localhost:8000/api/ai-interviews/access/${token}`);
+  const response = await fetch(`https://hr-portal-dqoi.onrender.com/api/ai-interviews/access/${token}`);
   if (!response.ok) {
     const err = await response.json();
     throw new Error(err.detail || 'Invalid link');
