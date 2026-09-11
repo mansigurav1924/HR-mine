@@ -2,7 +2,7 @@ import axios from 'axios';
 import { supabase } from '../lib/supabase';
 
 const api = axios.create({
-  baseURL: 'http://127.0.0.1:8000',
+  baseURL: 'https://hr-portal-dqoi.onrender.com',
   timeout: 15000,
 });
 
