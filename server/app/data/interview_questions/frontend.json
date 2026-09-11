@@ -1,0 +1,103 @@
+[
+  {
+    "id": "frontend_q_001",
+    "domain": "frontend",
+    "skills": [
+      "HTML",
+      "Accessibility"
+    ],
+    "difficulty": "medium",
+    "question": "What are the key considerations for building an accessible (a11y) web application?"
+  },
+  {
+    "id": "frontend_q_002",
+    "domain": "frontend",
+    "skills": [
+      "CSS"
+    ],
+    "difficulty": "medium",
+    "question": "Explain the CSS Box Model and the difference between content-box and border-box."
+  },
+  {
+    "id": "frontend_q_003",
+    "domain": "frontend",
+    "skills": [
+      "Performance",
+      "Browser"
+    ],
+    "difficulty": "medium",
+    "question": "How do you optimize the Critical Rendering Path?"
+  },
+  {
+    "id": "frontend_q_004",
+    "domain": "frontend",
+    "skills": [
+      "React",
+      "Hooks"
+    ],
+    "difficulty": "medium",
+    "question": "Describe the React component lifecycle and how hooks map to it."
+  },
+  {
+    "id": "frontend_q_005",
+    "domain": "frontend",
+    "skills": [
+      "CSS",
+      "Responsive Design"
+    ],
+    "difficulty": "medium",
+    "question": "What strategies do you use for responsive design without relying heavily on frameworks?"
+  },
+  {
+    "id": "frontend_q_006",
+    "domain": "frontend",
+    "skills": [
+      "React",
+      "Performance"
+    ],
+    "difficulty": "medium",
+    "question": "Explain the concept of 'memoization' in React and when it is actually necessary."
+  },
+  {
+    "id": "frontend_q_007",
+    "domain": "frontend",
+    "skills": [
+      "React",
+      "Forms"
+    ],
+    "difficulty": "medium",
+    "question": "How do you handle forms and validation in React?"
+  },
+  {
+    "id": "frontend_q_008",
+    "domain": "frontend",
+    "skills": [
+      "React",
+      "Virtual DOM"
+    ],
+    "difficulty": "medium",
+    "question": "What is the Virtual DOM and how does React's reconciliation algorithm work?"
+  },
+  {
+    "id": "frontend_q_009",
+    "domain": "frontend",
+    "skills": [
+      "Testing",
+      "Jest",
+      "React Testing Library"
+    ],
+    "difficulty": "medium",
+    "question": "Describe your approach to testing frontend components."
+  },
+  {
+    "id": "frontend_q_010",
+    "domain": "frontend",
+    "skills": [
+      "CSS",
+      "SASS",
+      "CSS-in-JS"
+    ],
+    "difficulty": "medium",
+    "question": "How do you manage complex CSS architectures at scale?"
+  }
+]

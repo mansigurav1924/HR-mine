@@ -1,0 +1,543 @@
+{
+  "ai_ml": {
+    "Python": [
+      "python",
+      "py"
+    ],
+    "Machine Learning": [
+      "machine learning",
+      "ml"
+    ],
+    "Deep Learning": [
+      "deep learning",
+      "dl"
+    ],
+    "NLP": [
+      "nlp",
+      "natural language processing"
+    ],
+    "Computer Vision": [
+      "computer vision",
+      "cv",
+      "image processing",
+      "opencv"
+    ],
+    "Pandas": [
+      "pandas"
+    ],
+    "NumPy": [
+      "numpy"
+    ],
+    "Scikit-learn": [
+      "scikit-learn",
+      "scikit learn",
+      "sklearn"
+    ],
+    "TensorFlow": [
+      "tensorflow",
+      "tf"
+    ],
+    "PyTorch": [
+      "pytorch"
+    ]
+  },
+  "web": {
+    "React": [
+      "react",
+      "react.js",
+      "reactjs"
+    ],
+    "JavaScript": [
+      "javascript",
+      "js",
+      "ecmascript"
+    ],
+    "TypeScript": [
+      "typescript",
+      "ts"
+    ],
+    "Node.js": [
+      "node.js",
+      "nodejs",
+      "node js",
+      "node"
+    ],
+    "Express": [
+      "express",
+      "express.js",
+      "expressjs"
+    ],
+    "HTML": [
+      "html",
+      "html5"
+    ],
+    "CSS": [
+      "css",
+      "css3"
+    ],
+    "Tailwind CSS": [
+      "tailwind css",
+      "tailwindcss",
+      "tailwind"
+    ],
+    "REST API": [
+      "rest api",
+      "rest",
+      "restful",
+      "restful api",
+      "rest apis"
+    ]
+  },
+  "backend": {
+    "FastAPI": [
+      "fastapi"
+    ],
+    "Flask": [
+      "flask"
+    ],
+    "Django": [
+      "django"
+    ],
+    "Spring Boot": [
+      "spring boot",
+      "springboot",
+      "spring"
+    ],
+    "Java": [
+      "java"
+    ],
+    "C": [
+      "c"
+    ],
+    "C++": [
+      "c++",
+      "cpp"
+    ],
+    "C#": [
+      "c#",
+      "csharp",
+      ".net"
+    ]
+  },
+  "data": {
+    "SQL": [
+      "sql",
+      "structured query language"
+    ],
+    "MySQL": [
+      "mysql"
+    ],
+    "PostgreSQL": [
+      "postgresql",
+      "postgres"
+    ],
+    "MongoDB": [
+      "mongodb",
+      "mongo"
+    ],
+    "Power BI": [
+      "power bi",
+      "powerbi"
+    ],
+    "Excel": [
+      "excel",
+      "ms excel",
+      "spreadsheets"
+    ],
+    "Tableau": [
+      "tableau"
+    ]
+  },
+  "mobile": {
+    "Android": [
+      "android"
+    ],
+    "Kotlin": [
+      "kotlin"
+    ],
+    "Java": [
+      "java"
+    ],
+    "Flutter": [
+      "flutter"
+    ],
+    "Dart": [
+      "dart"
+    ],
+    "React Native": [
+      "react native"
+    ]
+  },
+  "human_resources": {
+    "Recruitment": [
+      "recruitment",
+      "talent acquisition",
+      "sourcing"
+    ],
+    "Candidate Screening": [
+      "candidate screening",
+      "resume screening",
+      "screening"
+    ],
+    "Interview Coordination": [
+      "interview coordination",
+      "scheduling interviews"
+    ],
+    "HR Operations": [
+      "hr operations",
+      "hris",
+      "human resources operations"
+    ],
+    "Documentation": [
+      "documentation",
+      "record keeping"
+    ],
+    "Communication": [
+      "communication",
+      "interpersonal skills",
+      "verbal communication"
+    ]
+  },
+  "sales": {
+    "Lead Generation": [
+      "lead generation",
+      "lead gen",
+      "prospecting"
+    ],
+    "CRM": [
+      "crm",
+      "hubspot",
+      "salesforce"
+    ],
+    "Cold Calling": [
+      "cold calling",
+      "outbound calling",
+      "telecalling"
+    ],
+    "Negotiation": [
+      "negotiation",
+      "contract negotiation",
+      "deal closing"
+    ],
+    "Sales": [
+      "sales",
+      "b2b sales",
+      "direct sales",
+      "inside sales"
+    ],
+    "Customer Handling": [
+      "customer handling",
+      "client handling",
+      "customer relationship",
+      "account management"
+    ],
+    "Market Research": [
+      "market research",
+      "competitor analysis"
+    ]
+  },
+  "business_analyst": {
+    "Business Analysis": [
+      "business analysis",
+      "business analyst"
+    ],
+    "Requirement Gathering": [
+      "requirement gathering",
+      "requirements gathering",
+      "elicitation",
+      "user stories"
+    ],
+    "SQL": [
+      "sql"
+    ],
+    "Excel": [
+      "excel",
+      "ms excel"
+    ],
+    "Power BI": [
+      "power bi",
+      "powerbi"
+    ],
+    "JIRA": [
+      "jira",
+      "confluence"
+    ],
+    "Agile": [
+      "agile",
+      "scrum",
+      "sprint planning"
+    ],
+    "Process Modeling": [
+      "process modeling",
+      "process mapping",
+      "bpmn",
+      "flowcharts"
+    ]
+  },
+  "cloud_devops": {
+    "Docker": [
+      "docker"
+    ],
+    "Kubernetes": [
+      "kubernetes",
+      "k8s"
+    ],
+    "Git": [
+      "git"
+    ],
+    "GitHub": [
+      "github"
+    ],
+    "AWS": [
+      "aws",
+      "amazon web services"
+    ],
+    "Azure": [
+      "azure",
+      "microsoft azure"
+    ],
+    "GCP": [
+      "gcp",
+      "google cloud platform"
+    ]
+  },
+  "full_stack": {
+    "JavaScript": [
+      "javascript"
+    ],
+    "TypeScript": [
+      "typescript"
+    ],
+    "Python": [
+      "python"
+    ],
+    "Java": [
+      "java"
+    ],
+    "PHP": [
+      "php"
+    ],
+    "C#": [
+      "c#"
+    ],
+    "SQL": [
+      "sql"
+    ],
+    "HTML5": [
+      "html5"
+    ],
+    "CSS3": [
+      "css3"
+    ],
+    "React.js": [
+      "react.js",
+      "reactjs",
+      "react"
+    ],
+    "Next.js": [
+      "next.js",
+      "next",
+      "nextjs"
+    ],
+    "Angular": [
+      "angular"
+    ],
+    "Vue.js": [
+      "vue",
+      "vuejs",
+      "vue.js"
+    ],
+    "Svelte": [
+      "svelte"
+    ],
+    "Bootstrap": [
+      "bootstrap"
+    ],
+    "Tailwind CSS": [
+      "tailwind css"
+    ],
+    "Material UI": [
+      "material ui"
+    ],
+    "Redux": [
+      "redux"
+    ],
+    "Node.js": [
+      "nodejs",
+      "node.js",
+      "node"
+    ],
+    "Express.js": [
+      "expressjs",
+      "express.js",
+      "express"
+    ],
+    "Django": [
+      "django"
+    ],
+    "Flask": [
+      "flask"
+    ],
+    "FastAPI": [
+      "fastapi"
+    ],
+    "Spring Boot": [
+      "spring boot"
+    ],
+    "Laravel": [
+      "laravel"
+    ],
+    "ASP.NET": [
+      "asp.net"
+    ],
+    "MySQL": [
+      "mysql"
+    ],
+    "PostgreSQL": [
+      "postgresql"
+    ],
+    "Microsoft SQL Server": [
+      "microsoft sql server"
+    ],
+    "MongoDB": [
+      "mongodb"
+    ],
+    "Firebase": [
+      "firebase"
+    ],
+    "Redis": [
+      "redis"
+    ],
+    "SQLite": [
+      "sqlite"
+    ],
+    "MariaDB": [
+      "mariadb"
+    ],
+    "REST API": [
+      "rest api"
+    ],
+    "GraphQL": [
+      "graphql"
+    ],
+    "WebSockets": [
+      "websockets"
+    ],
+    "JSON": [
+      "json"
+    ],
+    "XML": [
+      "xml"
+    ],
+    "OAuth 2.0": [
+      "oauth 2.0"
+    ],
+    "JWT": [
+      "jwt"
+    ],
+    "Webhooks": [
+      "webhooks"
+    ],
+    "Third-Party API Integration": [
+      "third-party api integration"
+    ],
+    "Git": [
+      "git"
+    ],
+    "GitHub": [
+      "github"
+    ],
+    "Docker": [
+      "docker"
+    ],
+    "CI/CD": [
+      "ci/cd"
+    ],
+    "GitHub Actions": [
+      "github actions"
+    ],
+    "Linux": [
+      "linux"
+    ],
+    "Vercel": [
+      "vercel"
+    ],
+    "Netlify": [
+      "netlify"
+    ],
+    "Render": [
+      "render"
+    ],
+    "Railway": [
+      "railway"
+    ],
+    "AWS": [
+      "aws"
+    ],
+    "Microsoft Azure": [
+      "microsoft azure"
+    ],
+    "Google Cloud": [
+      "google cloud"
+    ],
+    "Unit Testing": [
+      "unit testing"
+    ],
+    "Integration Testing": [
+      "integration testing"
+    ],
+    "API Testing": [
+      "api testing"
+    ],
+    "End-to-End Testing": [
+      "end-to-end testing"
+    ],
+    "Postman": [
+      "postman"
+    ],
+    "Jest": [
+      "jest"
+    ],
+    "PyTest": [
+      "pytest"
+    ],
+    "Selenium": [
+      "selenium"
+    ],
+    "Playwright": [
+      "playwright"
+    ],
+    "Cypress": [
+      "cypress"
+    ],
+    "Object-Oriented Programming (OOP)": [
+      "object-oriented programming (oop)",
+      "oop",
+      "object-oriented programming"
+    ],
+    "Data Structures & Algorithms": [
+      "data structures & algorithms"
+    ],
+    "Design Patterns": [
+      "design patterns"
+    ],
+    "SOLID Principles": [
+      "solid principles"
+    ],
+    "System Design": [
+      "system design"
+    ],
+    "Software Architecture": [
+      "software architecture"
+    ],
+    "API Design": [
+      "api design"
+    ],
+    "Microservices": [
+      "microservices"
+    ],
+    "Agile/Scrum": [
+      "agile/scrum"
+    ]
+  }
+}

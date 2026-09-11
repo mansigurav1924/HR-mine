@@ -1,0 +1,101 @@
+[
+  {
+    "id": "data_q_001",
+    "domain": "data",
+    "skills": [
+      "Data Engineering",
+      "Architecture"
+    ],
+    "difficulty": "medium",
+    "question": "Explain the difference between a Data Warehouse and a Data Lake."
+  },
+  {
+    "id": "data_q_002",
+    "domain": "data",
+    "skills": [
+      "ETL",
+      "Data Engineering"
+    ],
+    "difficulty": "medium",
+    "question": "How do you approach designing an ETL pipeline?"
+  },
+  {
+    "id": "data_q_003",
+    "domain": "data",
+    "skills": [
+      "Databases",
+      "Performance"
+    ],
+    "difficulty": "medium",
+    "question": "Describe the differences between row-oriented and column-oriented databases."
+  },
+  {
+    "id": "data_q_004",
+    "domain": "data",
+    "skills": [
+      "SQL",
+      "Database Design"
+    ],
+    "difficulty": "medium",
+    "question": "What is data normalization and when might you intentionally denormalize?"
+  },
+  {
+    "id": "data_q_005",
+    "domain": "data",
+    "skills": [
+      "Data Modeling"
+    ],
+    "difficulty": "medium",
+    "question": "Explain the concept of a Star Schema."
+  },
+  {
+    "id": "data_q_006",
+    "domain": "data",
+    "skills": [
+      "Streaming",
+      "Data Engineering"
+    ],
+    "difficulty": "medium",
+    "question": "How do you handle real-time streaming data vs batch processing?"
+  },
+  {
+    "id": "data_q_007",
+    "domain": "data",
+    "skills": [
+      "SQL",
+      "Analytics"
+    ],
+    "difficulty": "medium",
+    "question": "What window functions in SQL do you find most useful and why?"
+  },
+  {
+    "id": "data_q_008",
+    "domain": "data",
+    "skills": [
+      "Data Quality",
+      "Testing"
+    ],
+    "difficulty": "medium",
+    "question": "Describe your approach to data quality and testing."
+  },
+  {
+    "id": "data_q_009",
+    "domain": "data",
+    "skills": [
+      "SQL",
+      "Performance"
+    ],
+    "difficulty": "medium",
+    "question": "How do you optimize slow analytical queries?"
+  },
+  {
+    "id": "data_q_010",
+    "domain": "data",
+    "skills": [
+      "Big Data",
+      "Hadoop"
+    ],
+    "difficulty": "medium",
+    "question": "Explain the MapReduce paradigm."
+  }
+]

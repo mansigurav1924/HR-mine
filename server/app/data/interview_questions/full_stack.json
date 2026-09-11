@@ -1,0 +1,106 @@
+[
+  {
+    "id": "full_stack_q_001",
+    "domain": "full_stack",
+    "skills": [
+      "React",
+      "Node.js",
+      "Authentication"
+    ],
+    "difficulty": "medium",
+    "question": "Explain how you would design authentication for a React and Node.js application."
+  },
+  {
+    "id": "full_stack_q_002",
+    "domain": "full_stack",
+    "skills": [
+      "React",
+      "State Management"
+    ],
+    "difficulty": "medium",
+    "question": "How do you manage global state in a complex React application?"
+  },
+  {
+    "id": "full_stack_q_003",
+    "domain": "full_stack",
+    "skills": [
+      "Node.js",
+      "Express",
+      "Performance"
+    ],
+    "difficulty": "medium",
+    "question": "Describe the process of optimizing a slow API endpoint in Express."
+  },
+  {
+    "id": "full_stack_q_004",
+    "domain": "full_stack",
+    "skills": [
+      "Database",
+      "SQL",
+      "Deployment"
+    ],
+    "difficulty": "medium",
+    "question": "How do you handle database migrations in a production environment?"
+  },
+  {
+    "id": "full_stack_q_005",
+    "domain": "full_stack",
+    "skills": [
+      "Security",
+      "JWT"
+    ],
+    "difficulty": "medium",
+    "question": "What are the security implications of storing JWTs in localStorage vs HTTP-only cookies?"
+  },
+  {
+    "id": "full_stack_q_006",
+    "domain": "full_stack",
+    "skills": [
+      "React",
+      "Next.js",
+      "Architecture"
+    ],
+    "difficulty": "medium",
+    "question": "Explain the difference between SSR and CSR and when to use each."
+  },
+  {
+    "id": "full_stack_q_007",
+    "domain": "full_stack",
+    "skills": [
+      "DevOps",
+      "CI/CD"
+    ],
+    "difficulty": "medium",
+    "question": "How do you implement CI/CD for a full-stack JavaScript application?"
+  },
+  {
+    "id": "full_stack_q_008",
+    "domain": "full_stack",
+    "skills": [
+      "Debugging",
+      "Full Stack"
+    ],
+    "difficulty": "medium",
+    "question": "Describe a challenging bug you fixed that spanned across both frontend and backend."
+  },
+  {
+    "id": "full_stack_q_009",
+    "domain": "full_stack",
+    "skills": [
+      "Architecture",
+      "Databases"
+    ],
+    "difficulty": "medium",
+    "question": "How do you ensure data consistency in a distributed system?"
+  },
+  {
+    "id": "full_stack_q_010",
+    "domain": "full_stack",
+    "skills": [
+      "WebSockets",
+      "Real-time"
+    ],
+    "difficulty": "medium",
+    "question": "Explain the concept of WebSockets and a use case for them."
+  }
+]

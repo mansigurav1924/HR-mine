@@ -1,0 +1,11 @@
+Dear {{ candidate_name }},
+
+Congratulations! We are pleased to offer you the position of {{ designation }} in the {{ department }} department at {{ company_name }}.
+
+Please find attached your official Offer Letter containing the details of your employment.
+
+This offer is valid until {{ offer_expiry_date }}. We look forward to welcoming you to the team!
+
+Best regards,
+HR Department
+{{ company_name }}

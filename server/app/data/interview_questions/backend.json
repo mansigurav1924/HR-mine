@@ -1,0 +1,105 @@
+[
+  {
+    "id": "backend_q_001",
+    "domain": "backend",
+    "skills": [
+      "Databases",
+      "Architecture"
+    ],
+    "difficulty": "medium",
+    "question": "Explain the CAP theorem and its implications for database selection."
+  },
+  {
+    "id": "backend_q_002",
+    "domain": "backend",
+    "skills": [
+      "System Design",
+      "API"
+    ],
+    "difficulty": "medium",
+    "question": "How would you design a rate limiter for a public API?"
+  },
+  {
+    "id": "backend_q_003",
+    "domain": "backend",
+    "skills": [
+      "API",
+      "REST",
+      "GraphQL"
+    ],
+    "difficulty": "medium",
+    "question": "Describe the differences between REST and GraphQL."
+  },
+  {
+    "id": "backend_q_004",
+    "domain": "backend",
+    "skills": [
+      "SQL",
+      "Databases"
+    ],
+    "difficulty": "medium",
+    "question": "What is indexing in a database and how does it affect read vs write operations?"
+  },
+  {
+    "id": "backend_q_005",
+    "domain": "backend",
+    "skills": [
+      "Scaling",
+      "DevOps"
+    ],
+    "difficulty": "medium",
+    "question": "Explain how you would implement horizontal scaling for a stateless backend service."
+  },
+  {
+    "id": "backend_q_006",
+    "domain": "backend",
+    "skills": [
+      "Queues",
+      "Redis",
+      "RabbitMQ"
+    ],
+    "difficulty": "medium",
+    "question": "How do you handle background jobs and message queues?"
+  },
+  {
+    "id": "backend_q_007",
+    "domain": "backend",
+    "skills": [
+      "Security",
+      "OWASP"
+    ],
+    "difficulty": "medium",
+    "question": "Describe a strategy for securing a backend against common OWASP vulnerabilities."
+  },
+  {
+    "id": "backend_q_008",
+    "domain": "backend",
+    "skills": [
+      "ORM",
+      "SQL",
+      "Performance"
+    ],
+    "difficulty": "medium",
+    "question": "What is the N+1 query problem and how do you resolve it?"
+  },
+  {
+    "id": "backend_q_009",
+    "domain": "backend",
+    "skills": [
+      "Architecture",
+      "Microservices"
+    ],
+    "difficulty": "medium",
+    "question": "Explain the concept of microservices versus a monolithic architecture."
+  },
+  {
+    "id": "backend_q_010",
+    "domain": "backend",
+    "skills": [
+      "API",
+      "Architecture"
+    ],
+    "difficulty": "medium",
+    "question": "How do you handle API versioning?"
+  }
+]

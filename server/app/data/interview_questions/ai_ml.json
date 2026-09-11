@@ -1,0 +1,101 @@
+[
+  {
+    "id": "ai_ml_q_001",
+    "domain": "ai_ml",
+    "skills": [
+      "Machine Learning",
+      "Concepts"
+    ],
+    "difficulty": "medium",
+    "question": "Explain the difference between supervised and unsupervised learning."
+  },
+  {
+    "id": "ai_ml_q_002",
+    "domain": "ai_ml",
+    "skills": [
+      "Data Science",
+      "Machine Learning"
+    ],
+    "difficulty": "medium",
+    "question": "How do you handle imbalanced datasets in classification tasks?"
+  },
+  {
+    "id": "ai_ml_q_003",
+    "domain": "ai_ml",
+    "skills": [
+      "Deep Learning",
+      "NLP"
+    ],
+    "difficulty": "medium",
+    "question": "Describe the architecture of a standard Transformer model."
+  },
+  {
+    "id": "ai_ml_q_004",
+    "domain": "ai_ml",
+    "skills": [
+      "Machine Learning",
+      "Model Training"
+    ],
+    "difficulty": "medium",
+    "question": "What is overfitting and how do you prevent it?"
+  },
+  {
+    "id": "ai_ml_q_005",
+    "domain": "ai_ml",
+    "skills": [
+      "Deep Learning"
+    ],
+    "difficulty": "medium",
+    "question": "Explain the vanishing gradient problem and how LSTMs or ResNets address it."
+  },
+  {
+    "id": "ai_ml_q_006",
+    "domain": "ai_ml",
+    "skills": [
+      "MLOps",
+      "Deployment"
+    ],
+    "difficulty": "medium",
+    "question": "How would you deploy a machine learning model to production?"
+  },
+  {
+    "id": "ai_ml_q_007",
+    "domain": "ai_ml",
+    "skills": [
+      "Evaluation",
+      "Metrics"
+    ],
+    "difficulty": "medium",
+    "question": "Describe the trade-offs between precision and recall."
+  },
+  {
+    "id": "ai_ml_q_008",
+    "domain": "ai_ml",
+    "skills": [
+      "Deep Learning",
+      "Transfer Learning"
+    ],
+    "difficulty": "medium",
+    "question": "What is Transfer Learning and when is it most effective?"
+  },
+  {
+    "id": "ai_ml_q_009",
+    "domain": "ai_ml",
+    "skills": [
+      "NLP",
+      "LLMs"
+    ],
+    "difficulty": "medium",
+    "question": "Explain how RAG (Retrieval-Augmented Generation) works."
+  },
+  {
+    "id": "ai_ml_q_010",
+    "domain": "ai_ml",
+    "skills": [
+      "Machine Learning",
+      "Optimization"
+    ],
+    "difficulty": "medium",
+    "question": "How do you approach hyperparameter tuning?"
+  }
+]

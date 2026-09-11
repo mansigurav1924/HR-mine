@@ -1,0 +1,101 @@
+[
+  {
+    "id": "mobile_q_001",
+    "domain": "mobile",
+    "skills": [
+      "Mobile",
+      "Architecture"
+    ],
+    "difficulty": "medium",
+    "question": "Explain the difference between native and cross-platform mobile development."
+  },
+  {
+    "id": "mobile_q_002",
+    "domain": "mobile",
+    "skills": [
+      "Mobile",
+      "Offline"
+    ],
+    "difficulty": "medium",
+    "question": "How do you handle offline capabilities and data syncing in a mobile app?"
+  },
+  {
+    "id": "mobile_q_003",
+    "domain": "mobile",
+    "skills": [
+      "Mobile",
+      "Lifecycle"
+    ],
+    "difficulty": "medium",
+    "question": "Describe the mobile application lifecycle and how to handle background tasks."
+  },
+  {
+    "id": "mobile_q_004",
+    "domain": "mobile",
+    "skills": [
+      "Performance",
+      "Mobile"
+    ],
+    "difficulty": "medium",
+    "question": "What are the key considerations for optimizing mobile app performance?"
+  },
+  {
+    "id": "mobile_q_005",
+    "domain": "mobile",
+    "skills": [
+      "UI",
+      "Responsive"
+    ],
+    "difficulty": "medium",
+    "question": "Explain how you approach mobile UI responsiveness across different device sizes."
+  },
+  {
+    "id": "mobile_q_006",
+    "domain": "mobile",
+    "skills": [
+      "Security",
+      "Mobile"
+    ],
+    "difficulty": "medium",
+    "question": "How do you securely store sensitive data on a mobile device?"
+  },
+  {
+    "id": "mobile_q_007",
+    "domain": "mobile",
+    "skills": [
+      "Deployment",
+      "App Stores"
+    ],
+    "difficulty": "medium",
+    "question": "Describe the process of publishing an app to the App Store or Google Play."
+  },
+  {
+    "id": "mobile_q_008",
+    "domain": "mobile",
+    "skills": [
+      "React Native"
+    ],
+    "difficulty": "medium",
+    "question": "What are the differences between State and Props in React Native?"
+  },
+  {
+    "id": "mobile_q_009",
+    "domain": "mobile",
+    "skills": [
+      "Navigation",
+      "Mobile"
+    ],
+    "difficulty": "medium",
+    "question": "How do you handle navigation in a complex mobile application?"
+  },
+  {
+    "id": "mobile_q_010",
+    "domain": "mobile",
+    "skills": [
+      "Push Notifications",
+      "Architecture"
+    ],
+    "difficulty": "medium",
+    "question": "Explain how push notifications work end-to-end."
+  }
+]
