@@ -136,24 +136,28 @@ class AssessmentService:
         subject = f"Assessment Invitation: {position}"
         body_text = (
             f"Dear {candidate_name},\n\n"
-            f"Congratulations.\n\n"
-            f"You have been shortlisted for the {position} position.\n\n"
-            f"Please complete your technical assessment using the secure link below:\n\n"
+            f"You have been invited to complete the assessment for the {position} position.\n\n"
+            f"Assessment Link:\n"
             f"{candidate_url}\n\n"
-            f"This link expires on {expires_str}.\n\n"
+            f"Please complete the assessment carefully.\n"
+            f"If your first assessment session is accidentally interrupted, you will be allowed to resume the same assessment one time.\n"
+            f"Your submitted answers will remain saved.\n"
+            f"Once the second session begins, another interruption will automatically submit the assessment using the answers already recorded.\n\n"
             f"Regards,\n"
-            f"HR Team"
+            f"HR Department"
         )
         body_html = f"""
         <p>Dear {candidate_name},</p>
-        <p>Congratulations.</p>
-        <p>You have been shortlisted for the <strong>{position}</strong> position.</p>
-        <p>Please complete your technical assessment using the secure link below:</p>
+        <p>You have been invited to complete the assessment for the <strong>{position}</strong> position.</p>
+        <p>Assessment Link:</p>
         <p><a href="{candidate_url}" style="display:inline-block;padding:10px 20px;background-color:#4F46E5;color:#ffffff;text-decoration:none;border-radius:6px;font-weight:bold;">Start Assessment</a></p>
         <p>Or visit: <a href="{candidate_url}">{candidate_url}</a></p>
-        <p><small>This link expires on {expires_str}.</small></p>
+        <p>Please complete the assessment carefully.</p>
+        <p>If your first assessment session is accidentally interrupted, you will be allowed to resume the same assessment one time.</p>
+        <p>Your submitted answers will remain saved.</p>
+        <p>Once the second session begins, another interruption will automatically submit the assessment using the answers already recorded.</p>
         <br>
-        <p>Regards,<br>HR Team</p>
+        <p>Regards,<br>HR Department</p>
         """
 
         provider = EmailService.get_provider()
@@ -218,10 +222,16 @@ class AssessmentService:
             raise ValueError("Assessment not found.")
             
         ass = ass_resp.data[0]
+        assessment_id = ass["assessment_id"]
         questions = ass.get("questions_json") or []
         
-        resp_query = supabase.table("assessment_responses").select("question_index").eq("assessment_id", ass["assessment_id"]).execute()
+        resp_query = supabase.table("assessment_responses").select("question_index").eq("assessment_id", assessment_id).execute()
         answered_count = len(resp_query.data or [])
+
+        # Fetch session state
+        session_resp = supabase.table("assessment_sessions").select("*").eq("assessment_id", assessment_id).order("session_number", desc=True).execute()
+        sessions = session_resp.data or []
+        current_session = sessions[0] if sessions else None
         
         return {
             "candidate_name": app_data.get("candidate_name") or "Candidate",
@@ -232,8 +242,149 @@ class AssessmentService:
             "answered_count": answered_count,
             "completed": ass.get("completed_at") is not None,
             "result": ass.get("result"),
-            "status": "ready"
+            "status": "ready",
+            "current_session": current_session
         }
+
+    def start_session(self, plaintext_token: str) -> Dict[str, Any]:
+        """
+        Starts or resumes a session for the assessment.
+        Max ASSESSMENT_MAX_REOPENS reopens allowed after the first open.
+        On the (MAX_REOPENS+1)-th open attempt, the assessment is auto-terminated.
+        """
+        token = self.token_service.resolve_token(plaintext_token, expected_stage="assessment")
+        app_id = token["application_id"]
+        
+        ass_resp = supabase.table("assessments").select("*").eq("application_id", app_id).is_("completed_at", "null").single().execute()
+        if not ass_resp.data:
+            raise ValueError("Assessment not found or already completed.")
+        
+        ass = ass_resp.data
+        assessment_id = ass["assessment_id"]
+
+        # ── Reopen count tracking ────────────────────────────────────────────
+        # reopen_count = 0 means never opened, 1 = opened once (first session),
+        # 2 = reopened once, 3 = second reopen (= MAX+1 → terminate)
+        current_reopen_count = int(ass.get("reopen_count") or 0)
+        max_reopens = settings.ASSESSMENT_MAX_REOPENS  # default 2
+
+        # If already at or beyond the maximum, terminate immediately if not already terminated
+        if current_reopen_count >= max_reopens + 1:
+            # It should have been terminated, but just in case it wasn't:
+            self._terminate_assessment(
+                assessment_id, app_id,
+                reason=f"exceeded_max_reopens",
+                detail=f"Candidate opened the assessment link {current_reopen_count + 1} times (max allowed: {max_reopens + 1})."
+            )
+            raise ValueError(
+                f"Assessment access denied. You have exceeded the maximum number of allowed link openings ({max_reopens}). "
+                "Your assessment has been automatically submitted."
+            )
+
+        # Increment the reopen counter
+        new_reopen_count = current_reopen_count + 1
+        supabase.table("assessments").update({
+            "reopen_count": new_reopen_count
+        }).eq("assessment_id", assessment_id).execute()
+
+        # If this open exceeds limit, auto-terminate and deny
+        if new_reopen_count > max_reopens + 1:
+            # Auto-terminate
+            self._terminate_assessment(
+                assessment_id, app_id,
+                reason=f"exceeded_max_reopens",
+                detail=f"Candidate opened the assessment link {new_reopen_count} times (max allowed: {max_reopens + 1})."
+            )
+            raise ValueError(
+                f"Assessment terminated. You opened the assessment link more than {max_reopens + 1} times. "
+                "Your assessment has been automatically submitted with your current answers."
+            )
+
+        # ── Session logic ────────────────────────────────────────────────────
+        session_resp = supabase.table("assessment_sessions").select("*").eq("assessment_id", assessment_id).order("session_number", desc=True).execute()
+        sessions = session_resp.data or []
+        
+        if not sessions:
+            # Create Session 1
+            new_session = supabase.table("assessment_sessions").insert({
+                "assessment_id": assessment_id,
+                "session_number": 1,
+                "status": "active"
+            }).execute()
+            
+            try:
+                supabase.table("audit_logs").insert({
+                    "action": "ASSESSMENT_SESSION_STARTED",
+                    "application_id": app_id,
+                    "metadata": {"assessment_id": assessment_id, "session_number": 1, "reopen_count": new_reopen_count}
+                }).execute()
+            except Exception: pass
+            
+            return {**new_session.data[0], "reopen_count": new_reopen_count}
+            
+        current_session = sessions[0]
+        if current_session["session_number"] == 1 and current_session["status"] == "interrupted":
+            # Create Session 2
+            new_session = supabase.table("assessment_sessions").insert({
+                "assessment_id": assessment_id,
+                "session_number": 2,
+                "status": "active"
+            }).execute()
+            
+            try:
+                supabase.table("audit_logs").insert({
+                    "action": "ASSESSMENT_SECOND_SESSION_STARTED",
+                    "application_id": app_id,
+                    "metadata": {"assessment_id": assessment_id, "session_number": 2, "reopen_count": new_reopen_count}
+                }).execute()
+            except Exception: pass
+            
+            return {**new_session.data[0], "reopen_count": new_reopen_count}
+            
+        if current_session["status"] == "active":
+            # Reconnecting to active session — check if this reopen exceeds the limit
+            if new_reopen_count > max_reopens + 1:
+                # Terminate
+                self._terminate_assessment(
+                    assessment_id, app_id,
+                    reason="exceeded_max_reopens",
+                    detail=f"Candidate reopened the assessment link {new_reopen_count} times (max: {max_reopens + 1})."
+                )
+                raise ValueError(
+                    f"Assessment terminated. You have opened the assessment link too many times. "
+                    "Your assessment has been automatically submitted."
+                )
+            supabase.table("assessment_sessions").update({
+                "last_activity_at": datetime.utcnow().isoformat()
+            }).eq("session_id", current_session["session_id"]).execute()
+            
+            return {**current_session, "reopen_count": new_reopen_count}
+            
+        raise ValueError("Assessment sessions exhausted or already completed.")
+
+    def heartbeat(self, plaintext_token: str) -> Dict[str, Any]:
+        """
+        Updates last_activity_at for the active session.
+        """
+        token = self.token_service.resolve_token(plaintext_token, expected_stage="assessment")
+        app_id = token["application_id"]
+        
+        ass_resp = supabase.table("assessments").select("assessment_id").eq("application_id", app_id).is_("completed_at", "null").single().execute()
+        if not ass_resp.data:
+            raise ValueError("Assessment not active.")
+            
+        assessment_id = ass_resp.data["assessment_id"]
+        session_resp = supabase.table("assessment_sessions").select("*").eq("assessment_id", assessment_id).order("session_number", desc=True).limit(1).execute()
+        if not session_resp.data or session_resp.data[0]["status"] != "active":
+            raise ValueError("No active session found.")
+            
+        current_session = session_resp.data[0]
+        supabase.table("assessment_sessions").update({
+            "last_activity_at": datetime.utcnow().isoformat()
+        }).eq("session_id", current_session["session_id"]).execute()
+        
+        return {"success": True}
+
 
     def get_current_question(self, plaintext_token: str) -> Dict[str, Any]:
         """
@@ -450,8 +601,15 @@ class AssessmentService:
         """
         from dateutil import parser as dtparser
 
-        PENALTY_TYPES = {"TAB_SWITCH", "FULLSCREEN_EXIT", "COPY_ATTEMPT", "PASTE_ATTEMPT", "CUT_ATTEMPT"}
-        SEVERITY_ORDER = ["TAB_SWITCH", "FULLSCREEN_EXIT", "COPY_ATTEMPT", "PASTE_ATTEMPT", "CUT_ATTEMPT"]
+        PENALTY_TYPES = {
+            "TAB_SWITCH", "FULLSCREEN_EXIT",
+            "COPY_ATTEMPT", "PASTE_ATTEMPT", "CUT_ATTEMPT",
+            "FACE_MISSING", "MULTIPLE_FACES",
+        }
+        SEVERITY_ORDER = [
+            "MULTIPLE_FACES", "TAB_SWITCH", "FULLSCREEN_EXIT",
+            "COPY_ATTEMPT", "PASTE_ATTEMPT", "CUT_ATTEMPT", "FACE_MISSING",
+        ]
 
         PENALTY_MAP = {
             "TAB_SWITCH":      settings.INTEGRITY_TAB_SWITCH_PENALTY,
@@ -459,6 +617,10 @@ class AssessmentService:
             "COPY_ATTEMPT":    settings.INTEGRITY_COPY_ATTEMPT_PENALTY,
             "PASTE_ATTEMPT":   settings.INTEGRITY_PASTE_ATTEMPT_PENALTY,
             "CUT_ATTEMPT":     settings.INTEGRITY_CUT_ATTEMPT_PENALTY,
+            "FACE_MISSING":    settings.INTEGRITY_FACE_MISSING_PENALTY,
+            "MULTIPLE_FACES":  settings.INTEGRITY_MULTIPLE_FACES_PENALTY,
+            "SCREEN_PRESENTATION_ATTEMPT": settings.INTEGRITY_SCREEN_PRESENTATION_ATTEMPT_PENALTY,
+            "SCREENSHOT_KEY_ATTEMPT": 0,
         }
 
         events_resp = supabase.table("assessment_integrity_events").select(
@@ -579,6 +741,8 @@ class AssessmentService:
             "copy_attempt_penalty":      settings.INTEGRITY_COPY_ATTEMPT_PENALTY,
             "paste_attempt_penalty":     settings.INTEGRITY_PASTE_ATTEMPT_PENALTY,
             "cut_attempt_penalty":       settings.INTEGRITY_CUT_ATTEMPT_PENALTY,
+            "face_missing_penalty":      settings.INTEGRITY_FACE_MISSING_PENALTY,
+            "multiple_faces_penalty":    settings.INTEGRITY_MULTIPLE_FACES_PENALTY,
             "max_penalty":               settings.INTEGRITY_MAX_PENALTY,
             "dedup_window_seconds":      settings.INTEGRITY_DEDUP_WINDOW_SECONDS,
             "question_time_seconds":     settings.ASSESSMENT_QUESTION_TIME_SECONDS,
@@ -773,6 +937,153 @@ class AssessmentService:
         
         status = log.data[0]["status"] if log.data else "failed"
         return {"success": status == "sent", "status": status}
+
+
+    def _auto_submit_assessment(self, assessment_id: str) -> None:
+        """
+        Internal method: Automatically finalizes an assessment where Session 2 is interrupted.
+        Calculates score based on total questions (unanswered get 0).
+        """
+        ass_resp = supabase.table("assessments").select("*, applications(*)").eq("assessment_id", assessment_id).is_("completed_at", "null").single().execute()
+        if not ass_resp.data:
+            return
+            
+        ass = ass_resp.data
+        app_id = ass["application_id"]
+        questions = ass.get("questions_json") or []
+        total_questions = len(questions)
+        pass_threshold = float(ass.get("pass_threshold", 50.0))
+        
+        # Mark session 2 as auto_submitted
+        session_resp = supabase.table("assessment_sessions").select("*").eq("assessment_id", assessment_id).eq("session_number", 2).eq("status", "interrupted").execute()
+        if session_resp.data:
+            supabase.table("assessment_sessions").update({
+                "status": "auto_submitted",
+                "ended_at": datetime.utcnow().isoformat(),
+                "end_reason": "second_session_interrupted"
+            }).eq("session_id", session_resp.data[0]["session_id"]).execute()
+            
+        # Tally existing responses
+        resp_query = supabase.table("assessment_responses").select("*").eq("assessment_id", assessment_id).execute()
+        responses = resp_query.data or []
+        
+        correct_count = sum(1 for r in responses if r.get("is_correct"))
+        incorrect_count = sum(1 for r in responses if not r.get("is_correct") and r.get("marks_awarded", 0) == 0 and r.get("selected_option") is not None)
+        timed_out_count = sum(1 for r in responses if r.get("selected_option") is None)
+        unanswered_count = total_questions - len(responses)
+        
+        # Unanswered questions effectively get 0 marks in this total calculation
+        # raw_score is (correct / total) * 100
+        raw_score = (correct_count / total_questions) * 100 if total_questions > 0 else 0
+        
+        penalty_score = self._calculate_integrity_penalty(assessment_id)[0]
+        adjusted_score = max(0, raw_score - penalty_score)
+        result = "Pass" if adjusted_score >= pass_threshold else "Fail"
+        
+        # Complete assessment
+        supabase.table("assessments").update({
+            "completed_at": datetime.utcnow().isoformat(),
+            "completion_reason": "second_session_interrupted",
+            "raw_score": raw_score,
+            "integrity_penalty": penalty_score,
+            "adjusted_score": adjusted_score,
+            "result": result
+        }).eq("assessment_id", assessment_id).execute()
+        
+        self.token_service.invalidate_token(ass.get("access_token_id"))
+        
+        try:
+            supabase.table("audit_logs").insert({
+                "action": "ASSESSMENT_AUTO_SUBMITTED",
+                "application_id": app_id,
+                "metadata": {"assessment_id": assessment_id, "score": adjusted_score}
+            }).execute()
+        except Exception: pass
+        
+        self._send_assessment_result_email(ass, app_id, result)
+
+    def _terminate_assessment(self, assessment_id: str, app_id: str, reason: str, detail: str = "") -> None:
+        """
+        Internal: Auto-terminates an active assessment by scoring current answers,
+        marking completion, updating application status, invalidating the token,
+        and sending a result email.
+        Safe to call multiple times — idempotent if already completed.
+        """
+        try:
+            # Fetch the assessment (only act if not yet completed)
+            ass_resp = supabase.table("assessments").select("*").eq("assessment_id", assessment_id).is_("completed_at", "null").execute()
+            if not ass_resp.data:
+                return  # Already completed — nothing to do
+            ass = ass_resp.data[0]
+
+            questions = ass.get("questions_json") or []
+            total_questions = len(questions)
+            pass_threshold = float(ass.get("pass_threshold", 60.0))
+
+            # Tally existing responses
+            resp_query = supabase.table("assessment_responses").select("*").eq("assessment_id", assessment_id).execute()
+            responses = resp_query.data or []
+
+            correct_count = sum(1 for r in responses if r.get("is_correct"))
+            raw_score = (correct_count / total_questions) * 100 if total_questions > 0 else 0
+
+            penalty_score = self._calculate_integrity_penalty(assessment_id)[0]
+            adjusted_score = max(0, raw_score - penalty_score)
+            result = "pass" if adjusted_score >= pass_threshold else "fail"
+            result_lower = result.lower()
+
+            # Mark active session as terminated
+            session_resp = supabase.table("assessment_sessions").select("session_id").eq("assessment_id", assessment_id).eq("status", "active").execute()
+            if session_resp.data:
+                # Map arbitrary termination reasons to the DB enum (auto_submitted)
+                # We save the actual detail in the audit log or assessments table.
+                supabase.table("assessment_sessions").update({
+                    "status": "auto_submitted",
+                    "ended_at": datetime.utcnow().isoformat(),
+                    "end_reason": "auto_submitted"
+                }).eq("session_id", session_resp.data[0]["session_id"]).execute()
+
+            # Complete assessment with termination reason
+            supabase.table("assessments").update({
+                "completed_at": datetime.utcnow().isoformat(),
+                "completion_reason": reason,
+                "raw_score": raw_score,
+                "integrity_penalty": penalty_score,
+                "adjusted_score": adjusted_score,
+                "result": result_lower
+            }).eq("assessment_id", assessment_id).execute()
+
+            # Update application status
+            new_status = "assessment_passed" if result_lower == "pass" else "assessment_failed"
+            supabase.table("applications").update({"current_status": new_status}).eq("application_id", app_id).execute()
+
+            # Invalidate the token
+            self.token_service.invalidate_token(ass.get("access_token_id"))
+
+            # Audit log
+            try:
+                supabase.table("audit_logs").insert({
+                    "action": "ASSESSMENT_TERMINATED",
+                    "application_id": app_id,
+                    "metadata": {
+                        "assessment_id": assessment_id,
+                        "reason": reason,
+                        "detail": detail,
+                        "score": adjusted_score,
+                        "result": result_lower
+                    }
+                }).execute()
+            except Exception:
+                pass
+
+            # Send result email
+            try:
+                self._send_assessment_result_email(ass, app_id, result_lower)
+            except Exception as e:
+                logger.warning(f"Result email failed after termination for assessment {assessment_id}: {e}")
+
+        except Exception as e:
+            logger.error(f"_terminate_assessment failed for {assessment_id}: {e}")
 
     def get_dashboard_data(self) -> List[Dict[str, Any]]:
         """HR Dashboard: returns all assessments with application details and raw scores."""
@@ -1053,7 +1364,8 @@ class AssessmentService:
         Candidate portal: logs a single browser integrity signal.
         Token must be valid, assessment must be active (not completed, not expired).
         Rate limiting: max 10 identical event_type events per minute per assessment.
-        Does NOT change score, result, or application status.
+        TAB_SWITCH auto-terminate: if total TAB_SWITCH events reach ASSESSMENT_TAB_SWITCH_TERMINATE_THRESHOLD,
+        the assessment is automatically terminated (scored with current answers).
         Does NOT store clipboard content or any sensitive data.
         """
         # 1. Validate token (raises ValueError if invalid/expired/wrong-stage)
@@ -1090,9 +1402,11 @@ class AssessmentService:
             "assessment_id": assessment_id,
             "event_type": request.event_type,
             "question_index": request.question_index,
-            "occurred_at": datetime.utcnow().isoformat()
-            # metadata field reserved for future non-sensitive additions
+            "occurred_at": datetime.utcnow().isoformat(),
         }
+        # Store episode duration in metadata if provided (non-critical field)
+        if request.duration_seconds is not None:
+            event_payload["metadata"] = {"duration_seconds": request.duration_seconds}
 
         try:
             supabase.table("assessment_integrity_events").insert(event_payload).execute()
@@ -1100,18 +1414,57 @@ class AssessmentService:
             logger.warning(f"Failed to log integrity event {request.event_type} for assessment {assessment_id}: {e}")
             # Do not raise — integrity logging must never crash the candidate's assessment
 
-        return {"logged": True}
+        # 5. TAB_SWITCH auto-termination check
+        if request.event_type == "TAB_SWITCH":
+            try:
+                threshold = settings.ASSESSMENT_TAB_SWITCH_TERMINATE_THRESHOLD
+                tab_count_resp = supabase.table("assessment_integrity_events").select(
+                    "event_id", count="exact"
+                ).eq("assessment_id", assessment_id).eq("event_type", "TAB_SWITCH").execute()
+                total_tab_switches = tab_count_resp.count or 0
+
+                if total_tab_switches >= threshold:
+                    # Auto-terminate the assessment
+                    self._terminate_assessment(
+                        assessment_id, app_id,
+                        reason="tab_switch_limit_exceeded",
+                        detail=f"Candidate exceeded tab switch limit ({total_tab_switches}/{threshold})."
+                    )
+                    return {
+                        "logged": True,
+                        "terminated": True,
+                        "termination_reason": "tab_switch_limit_exceeded",
+                        "message": f"Assessment terminated: You switched tabs {total_tab_switches} time(s). Maximum allowed is {threshold - 1}."
+                    }
+            except Exception as e:
+                logger.error(f"Tab switch termination check failed for assessment {assessment_id}: {e}")
+
+        return {"logged": True, "terminated": False}
 
     def get_integrity_summary(self, assessment_id: str) -> Dict[str, Any]:
         """
         HR Admin only. Returns event counts, derived integrity status, event timeline,
-        and violation episode breakdown for penalty calculation.
+        violation episode breakdown, reopen count, and termination info.
         Does NOT expose candidate token.
         """
-        # Verify assessment exists
-        ass_resp = supabase.table("assessments").select("assessment_id").eq("assessment_id", assessment_id).execute()
+        # Verify assessment exists and fetch reopen/termination metadata
+        ass_resp = supabase.table("assessments").select(
+            "assessment_id, reopen_count, completed_at, completion_reason"
+        ).eq("assessment_id", assessment_id).execute()
         if not ass_resp.data:
             raise ValueError("Assessment not found.")
+
+        ass_meta = ass_resp.data[0]
+        reopen_count = int(ass_meta.get("reopen_count") or 0)
+        completion_reason = ass_meta.get("completion_reason") or None
+        # Derive termination flag: any non-voluntary completion reason is a termination
+        TERMINATION_REASONS = {
+            "tab_switch_limit_exceeded",
+            "exceeded_max_reopens",
+            "second_session_interrupted",
+            "auto_submitted",
+        }
+        terminated = completion_reason in TERMINATION_REASONS if completion_reason else False
 
         # Fetch all events ordered by time
         events_resp = supabase.table("assessment_integrity_events").select(
@@ -1128,8 +1481,15 @@ class AssessmentService:
             "COPY_ATTEMPT": 0,
             "PASTE_ATTEMPT": 0,
             "CUT_ATTEMPT": 0,
+            "FACE_MISSING": 0,
+            "MULTIPLE_FACES": 0,
+            "CAMERA_DISCONNECTED": 0,
+            "CAMERA_ERROR": 0,
+            "SCREEN_PRESENTATION_ATTEMPT": 0,
+            "SCREENSHOT_KEY_ATTEMPT": 0,
         }
         fullscreen_supported = True
+        camera_monitored = False
 
         for ev in events:
             et = ev.get("event_type", "")
@@ -1137,6 +1497,8 @@ class AssessmentService:
                 counts[et] += 1
             if et == "FULLSCREEN_UNSUPPORTED":
                 fullscreen_supported = False
+            elif et == "ASSESSMENT_CAMERA_MONITORING_STARTED":
+                camera_monitored = True
 
         # Derive integrity status using configurable threshold
         threshold = settings.ASSESSMENT_TAB_SWITCH_REVIEW_THRESHOLD
@@ -1144,6 +1506,9 @@ class AssessmentService:
             counts["TAB_SWITCH"] >= threshold
             or counts["FULLSCREEN_EXIT"] >= 2
             or counts["COPY_ATTEMPT"] >= 3
+            or counts["SCREEN_PRESENTATION_ATTEMPT"] >= 1
+            or counts["FACE_MISSING"] >= 2
+            or counts["MULTIPLE_FACES"] >= 1
         )
         integrity_status = "review_recommended" if review else "clear"
 
@@ -1163,14 +1528,35 @@ class AssessmentService:
         warnings_issued = sum(1 for ep in episodes if ep.get("is_warning"))
         penalties_applied = sum(1 for ep in episodes if not ep.get("is_warning"))
 
+        # Human-readable termination reason label
+        termination_reason_labels = {
+            "tab_switch_limit_exceeded": "Tab switch limit exceeded",
+            "exceeded_max_reopens": "Max link-reopen limit exceeded",
+            "second_session_interrupted": "Second session interrupted (auto-submitted)",
+            "auto_submitted": "Auto-submitted by system",
+        }
+        termination_reason_label = termination_reason_labels.get(completion_reason, completion_reason) if completion_reason else None
+
         return {
             "assessment_id": assessment_id,
+            # ── Reopen / Termination stats ──────────────────────────────────────
+            "reopen_count": reopen_count,
+            "terminated": terminated,
+            "termination_reason": completion_reason,
+            "termination_reason_label": termination_reason_label,
+            # ── Integrity event counts ──────────────────────────────────────────
             "tab_switches": counts["TAB_SWITCH"],
             "window_blurs": counts["WINDOW_BLUR"],
             "fullscreen_exits": counts["FULLSCREEN_EXIT"],
             "copy_attempts": counts["COPY_ATTEMPT"],
             "paste_attempts": counts["PASTE_ATTEMPT"],
             "cut_attempts": counts["CUT_ATTEMPT"],
+            "screen_presentation_attempts": counts["SCREEN_PRESENTATION_ATTEMPT"],
+            "screenshot_attempts": counts["SCREENSHOT_KEY_ATTEMPT"],
+            "face_missing_events": counts["FACE_MISSING"],
+            "multiple_face_events": counts["MULTIPLE_FACES"],
+            "camera_interruptions": counts["CAMERA_DISCONNECTED"] + counts["CAMERA_ERROR"],
+            "camera_monitored": camera_monitored,
             "fullscreen_supported": fullscreen_supported,
             "integrity_status": integrity_status,
             "warnings_issued": warnings_issued,
