@@ -70,6 +70,20 @@ def get_candidate_state(token: str):
     except ValueError as e:
         raise HTTPException(status_code=403, detail=str(e))
 
+@router.post("/access/{token}/start_session")
+def start_session(token: str):
+    try:
+        return assessment_service.start_session(token)
+    except ValueError as e:
+        raise HTTPException(status_code=403, detail=str(e))
+
+@router.post("/access/{token}/heartbeat")
+def heartbeat(token: str):
+    try:
+        return assessment_service.heartbeat(token)
+    except ValueError as e:
+        raise HTTPException(status_code=403, detail=str(e))
+
 @router.get("/access/{token}/question", response_model=CandidateQuestionResponse)
 def get_current_question(token: str):
     try:
