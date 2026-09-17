@@ -1,7 +1,7 @@
 import api from './api';
 import axios from 'axios';
 
-const BASE_URL = import.meta.env.VITE_API_URL || 'https://hr-portal-dqoi.onrender.com';
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
 
 // HR Endpoints (Authenticated)
 export const generateAssessment = async (applicationId, config = { question_count: 20, pass_threshold: 60.0 }) => {
@@ -45,6 +45,16 @@ export const getCandidateState = async (token) => {
   return response.data;
 };
 
+export const startSession = async (token) => {
+  const response = await axios.post(`${BASE_URL}/api/assessments/access/${token}/start_session`);
+  return response.data;
+};
+
+export const sendHeartbeat = async (token) => {
+  const response = await axios.post(`${BASE_URL}/api/assessments/access/${token}/heartbeat`);
+  return response.data;
+};
+
 export const getCurrentQuestion = async (token) => {
   const response = await axios.get(`${BASE_URL}/api/assessments/access/${token}/question`);
   return response.data;
@@ -67,19 +77,22 @@ export const reportQuestionTimeout = async (token) => {
 
 /**
  * Candidate: log a single browser integrity signal.
- * Fire-and-forget — errors are silently swallowed so the assessment is never interrupted.
+ * Returns the server response (may contain { terminated: true } for tab-switch limit).
+ * Errors are silently swallowed so the assessment is never interrupted.
  * Clipboard content, screenshots, and browser history are NEVER captured or sent.
  */
-export const logIntegrityEvent = async (token, eventType, questionIndex = null) => {
+export const logIntegrityEvent = async (token, eventType, questionIndex = null, durationSeconds = null) => {
   try {
-    await axios.post(`${BASE_URL}/api/assessments/access/${token}/integrity-event`, {
-      event_type: eventType,
-      question_index: questionIndex
-    });
+    const payload = { event_type: eventType, question_index: questionIndex };
+    if (durationSeconds !== null) payload.duration_seconds = durationSeconds;
+    const response = await axios.post(`${BASE_URL}/api/assessments/access/${token}/integrity-event`, payload);
+    return response.data; // { logged, terminated, termination_reason, message }
   } catch {
     // Silent fail — integrity logging must never crash the candidate's assessment
+    return { logged: false, terminated: false };
   }
 };
+
 
 /**
  * HR Admin: fetch integrity summary (counts, status, event timeline) for a completed assessment.
